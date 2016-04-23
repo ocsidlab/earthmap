@@ -1,5 +1,6 @@
 # earthmap
-Air, water and earth.
+![](https://cloud.githubusercontent.com/assets/126868/14763637/d5f3060e-09b8-11e6-9ce9-419ee468e240.png)
+_Air, water and earth._
 
 ## Data
 ### Air
