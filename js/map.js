@@ -26,23 +26,102 @@ map.on('style.load', function(e) {
           console.log(airQuality);
 
           var sourceObj = new mapboxgl.GeoJSONSource({
-            data: GeoJSON.parse(airQuality,{Point: ['lat', 'lon'], include: ['name']})
+            data: GeoJSON.parse(airQuality,{Point: ['lat', 'lon'], include: ['name','aqi']})
           });
 
           map.addSource('aqi', sourceObj);
 
-          map.addLayer({
-             "id": "aqi-all",
-             "type": "circle",
-             "source": "aqi",
-             "layout": {
-                 "icon-image": "{marker-symbol}-15",
-                 "text-field": "{name}",
-                 "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-                 "text-offset": [0, 0.6],
-                 "text-anchor": "top"
+          // Add AQI layers
+        map.addLayer({
+          "id": "aqi-50",
+         "type": "circle",
+           "source": "aqi",
+           "filter": [
+              "<",
+              "aqi",
+              200
+          ],
+           "paint": {
+              "circle-color": "hsl(123, 100%, 51%)",
+              "circle-blur": 2,
+              "circle-radius": {
+                  "base": 1,
+                  "stops": [
+                      [
+                          4,
+                          15
+                      ],
+                      [
+                          13,
+                          40
+                      ]
+                  ]
+              }
+          }
+       });
+       map.addLayer({
+         "id": "aqi-50-300",
+        "type": "circle",
+          "source": "aqi",
+          "filter": [
+             "all",
+             [
+                 "<",
+                 "aqi",
+                 300
+             ],
+             [
+                 ">",
+                 "aqi",
+                 50
+             ]
+         ],
+          "paint": {
+             "circle-color": "hsl(56, 100%, 51%)",
+             "circle-blur": 2,
+             "circle-radius": {
+                 "base": 1,
+                 "stops": [
+                     [
+                         4,
+                         15
+                     ],
+                     [
+                         13,
+                         40
+                     ]
+                 ]
              }
-         });
+         }
+      });
+       map.addLayer({
+         "id": "aqi-300",
+        "type": "circle",
+          "source": "aqi",
+          "filter": [
+             ">",
+             "aqi",
+             300
+         ],
+          "paint": {
+             "circle-color": "hsl(0, 100%, 51%)",
+             "circle-blur": 2,
+             "circle-radius": {
+                 "base": 1,
+                 "stops": [
+                     [
+                         4,
+                         15
+                     ],
+                     [
+                         13,
+                         40
+                     ]
+                 ]
+             }
+         }
+      });
+
 
 
       }
