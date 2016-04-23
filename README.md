@@ -12,3 +12,4 @@ Air, water and earth.
 ### Earth
 * Forests and wooded areas updated every week from [OpenStreetMap](http://osm.org).
 * Individual trees updated every week from [OpenStreetMap](http://osm.org).
+* Quarries and landfills updated every week from [OpenStreetMap](http://osm.org).
