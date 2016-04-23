@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <title>Earth Map</title>
+  <meta name="description" content="Air, water and earth.">
+  <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.17.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.17.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.0.0/mapbox-gl-geocoder.js'></script>
+  <link rel='stylesheet' href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v1.0.0/mapbox-gl-geocoder.css' type='text/css' />
+  <link href="https://www.mapbox.com/base/latest/base.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+
+
+<body class='map'>
+<!--[if lt IE 8]>
+  <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+  <div class='col12 clearfix'>
+    <div id='map' class=''></div>
+    <div style="position: absolute; bottom: 0">
+      <div class='pad1 info'>
+          <div class='fill-darkblue-opaque round prose pad2'>
+            <h1 class='fancy'>Air, Water and Earth</h1>
+            <h3 class='fancy' id='title'></h3>
+            <p class='prose' id='text'></p>
+          </div>
+      </div>
+      <!-- <div class='pill pad1 toggles'>
+        <a href='#' id='rajdhani' class='col12 button stroke'>Rajdhani Express</a>
+        <a href='#' id='duronto' class='col12 button stroke'>Duronto Express</a>
+        <a href='#' id= 'shatabdi' class='col12 button stroke'>Shatabdi Express</a>
+        <a href='#' id='garibrath' class='col12 button stroke'>Garib Rath Express</a>
+        <a href='#' id='passenger' class='col12 button stroke'>Passenger Trains</a>
+        <a href='#' id='mail' class='col12 button stroke'>Mail Trains</a>
+      </div> -->
+    </div>
+  </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript" src=js/map.js></script>
+
+</body>
+</html>
