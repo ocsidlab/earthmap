@@ -123,6 +123,16 @@ map.on('style.load', function(e) {
                     }
                 }
             });
+            map.addLayer({
+                "id": "aqi-labels",
+                "type": "symbol",
+                "source": "aqi",
+                "minzoom": 7,
+                "layout": {
+                "text-field": "AQI: {aqi}",
+                "text-size": 10
+              }
+            });
 
 
 
