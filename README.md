@@ -1,6 +1,8 @@
 # earthmap
-![](https://cloud.githubusercontent.com/assets/126868/14763637/d5f3060e-09b8-11e6-9ce9-419ee468e240.png)
+![](https://cloud.githubusercontent.com/assets/126868/14763837/260d0be2-09c0-11e6-8d0c-f89e0e406868.png)
 _Air, water and earth._
+
+See the relationship between air, water, earth and man.
 
 ## Data
 ### Air
