@@ -18,6 +18,7 @@ map.on('style.load', function(e) {
     // Add AQI source and layers
     var aqiDataLayer = new mapboxgl.GeoJSONSource();
     map.addSource('aqi', aqiDataLayer);
+
     map.addLayer({
         "id": "aqi-50",
         "type": "circle",
@@ -26,6 +27,40 @@ map.on('style.load', function(e) {
             "<",
             "aqi",
             50
+        ],
+        "paint": {
+            "circle-color": "hsl(221, 100%, 60%)",
+            "circle-blur": 2,
+            "circle-radius": {
+                "base": 1,
+                "stops": [
+                    [
+                        4,
+                        15
+                    ],
+                    [
+                        13,
+                        40
+                    ]
+                ]
+            }
+        }
+    });
+    map.addLayer({
+        "id": "aqi-20-50",
+        "type": "circle",
+        "source": "aqi",
+        "filter": [
+            "all", [
+                "<",
+                "aqi",
+                50
+            ],
+            [
+                ">",
+                "aqi",
+                20
+            ]
         ],
         "paint": {
             "circle-color": "hsl(196, 100%, 50%)",
