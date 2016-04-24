@@ -16,20 +16,30 @@ var map = new mapboxgl.Map({
 map.on('style.load', function(e) {
 
     // AQI - fetch latest data from IndiaSpend
-    var airQualityRaw;
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
 
         if (xhr.readyState == XMLHttpRequest.DONE) {
 
-            airQuality = JSON.parse(xhr.responseText);
-            console.log(airQuality);
+            var airQualityRaw;
+            // airQualityRaw = JSON.parse(xhr.responseText);
+            airQualityRaw = JSON.parse(xhr.responseText.substring(13,xhr.responseText.length-1), function(k, v) {
+                return (k === "aqi") ? parseInt(v) : v;
+            });
+
+            // var airQuality = GeoJSON.parse(airQualityRaw, {
+            //     Point: ['lat', 'lon'],
+            //     include: ['name','city', 'aqi']
+            // })
+            console.log(airQualityRaw);
+            var airQuality = GeoJSON.parse(airQualityRaw, {
+                Point: ['lat', 'lon'],
+                include: ['name','city', 'aqi']
+            })
+
 
             var sourceObj = new mapboxgl.GeoJSONSource({
-                data: GeoJSON.parse(airQuality, {
-                    Point: ['lat', 'lon'],
-                    include: ['name', 'aqi']
-                })
+                data: airQuality
             });
 
             map.addSource('aqi', sourceObj);
@@ -45,7 +55,7 @@ map.on('style.load', function(e) {
                     200
                 ],
                 "paint": {
-                    "circle-color": "hsl(123, 100%, 51%)",
+                    "circle-color": "hsl(196, 100%, 50%)",
                     "circle-blur": 2,
                     "circle-radius": {
                         "base": 1,
@@ -70,7 +80,7 @@ map.on('style.load', function(e) {
                     "all", [
                         "<",
                         "aqi",
-                        300
+                        250
                     ],
                     [
                         ">",
@@ -79,7 +89,7 @@ map.on('style.load', function(e) {
                     ]
                 ],
                 "paint": {
-                    "circle-color": "hsl(56, 100%, 51%)",
+                    "circle-color": "hsl(48, 100%, 50%)",
                     "circle-blur": 2,
                     "circle-radius": {
                         "base": 1,
@@ -97,16 +107,50 @@ map.on('style.load', function(e) {
                 }
             });
             map.addLayer({
-                "id": "aqi-300",
+                "id": "aqi-250-400",
+                "type": "circle",
+                "source": "aqi",
+                "filter": [
+                    "all", [
+                        "<",
+                        "aqi",
+                        400
+                    ],
+                    [
+                        ">",
+                        "aqi",
+                        250
+                    ]
+                ],
+                "paint": {
+                    "circle-color": "hsl(0, 100%, 51%)",
+                    "circle-blur": 2,
+                    "circle-radius": {
+                        "base": 1,
+                        "stops": [
+                            [
+                                4,
+                                15
+                            ],
+                            [
+                                13,
+                                40
+                            ]
+                        ]
+                    }
+                }
+            });
+            map.addLayer({
+                "id": "aqi-400",
                 "type": "circle",
                 "source": "aqi",
                 "filter": [
                     ">",
                     "aqi",
-                    300
+                    400
                 ],
                 "paint": {
-                    "circle-color": "hsl(0, 100%, 51%)",
+                    "circle-color": "hsl(0, 91%, 19%)",
                     "circle-blur": 2,
                     "circle-radius": {
                         "base": 1,
@@ -129,7 +173,7 @@ map.on('style.load', function(e) {
                 "source": "aqi",
                 "minzoom": 7,
                 "layout": {
-                "text-field": "AQI: {aqi}",
+                "text-field": "AQI: {aqi} {city}",
                 "text-size": 10
               }
             });
@@ -138,8 +182,13 @@ map.on('style.load', function(e) {
 
         }
     }
-    xhr.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json ', true);
+    // xhr.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
+    xhr.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((10.486331518916343,75.85197317812504),(14.348089290523568,81.03752005312504))', true);
     xhr.send(null);
+
+    function fetchData(){
+
+    }
 
 
 
