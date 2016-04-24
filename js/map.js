@@ -146,13 +146,13 @@ map.on('style.load', function(e) {
         "source": "aqi",
         "minzoom": 8,
         "layout": {
-            "text-field": "AQI: {aqi} {city}",
+            "text-field": "AQI: {aqi} {name}",
             "text-size": 10
         }
     });
 
     // Fetch Air Quality Index data feed
-    var airQuality={};
+    var airQuality = {};
 
     // aqicn.org
     var xhrAQICN = new XMLHttpRequest();
@@ -164,14 +164,19 @@ map.on('style.load', function(e) {
                 return (k === "aqi") ? parseInt(v) : v;
             });
 
-            // console.log(airQualityRaw);
-            var responseGeo = GeoJSON.parse(response, {
-                Point: ['lat', 'lon'],
-                include: ['name', 'city', 'aqi']
-            })
+            console.log(response);
+            // Update properties
+            for (var row in response) {
+                response[row]["id"] = response[row]["idx"];
+                response[row]["time"] = response[row]["stamp"];
+                response[row]["name"] = response[row]["city"];
+                response[row]["source"] = "AQICN";
+            }
+
+            // console.log(response);
 
             // Update the data
-            updateDataLayer(responseGeo, airQuality);
+            updateDataLayer("aqi", response);
 
         }
     }
@@ -184,29 +189,37 @@ map.on('style.load', function(e) {
 
             var response = JSON.parse(xhrINDIASPEND.responseText);
 
-            // console.log(airQualityRaw);
-            var responseGeo = GeoJSON.parse(response, {
-                Point: ['lat', 'lon'],
-                include: ['name', 'city', 'aqi']
-            })
+            // Add source
+            for (var row in response) {
+                response[row]["source"] = "IndiaSpend";
+            }
+
+            // console.log(response);
 
             // Update the data
-            updateDataLayer(responseGeo, airQuality);
+            updateDataLayer("aqi", response);
 
         }
     }
 
-    // xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
-    // xhrINDIASPEND.send(null);
-    var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + + map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
-
-    xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
-    xhrAQICN.send(null);
+    xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
+    xhrINDIASPEND.send(null);
+    // var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
+    // xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
+    // xhrAQICN.send(null);
 
     // Update the datasets with the latest feed and redraw the map
-    function updateDataLayer(source, target){
-      console.log(source);
-      aqiDataLayer.setData(source);
+    function updateDataLayer(layerID, feed) {
+
+        if (layerID == 'aqi') {
+            var source = GeoJSON.parse(feed, {
+                Point: ['lat', 'lon'],
+                include: ['id', 'name', 'aqi', 'source', 'time']
+            })
+            console.log(source);
+            aqiDataLayer.setData(source);
+        }
+
     }
 
 
