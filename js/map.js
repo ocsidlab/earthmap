@@ -25,7 +25,7 @@ map.on('style.load', function(e) {
         "filter": [
             "<",
             "aqi",
-            200
+            50
         ],
         "paint": {
             "circle-color": "hsl(196, 100%, 50%)",
@@ -46,7 +46,41 @@ map.on('style.load', function(e) {
         }
     });
     map.addLayer({
-        "id": "aqi-50-300",
+        "id": "aqi-50-150",
+        "type": "circle",
+        "source": "aqi",
+        "filter": [
+            "all", [
+                "<",
+                "aqi",
+                150
+            ],
+            [
+                ">",
+                "aqi",
+                50
+            ]
+        ],
+        "paint": {
+            "circle-color": "hsl(108, 100%, 50%)",
+            "circle-blur": 2,
+            "circle-radius": {
+                "base": 1,
+                "stops": [
+                    [
+                        4,
+                        15
+                    ],
+                    [
+                        13,
+                        40
+                    ]
+                ]
+            }
+        }
+    });
+    map.addLayer({
+        "id": "aqi-150-250",
         "type": "circle",
         "source": "aqi",
         "filter": [
@@ -58,7 +92,7 @@ map.on('style.load', function(e) {
             [
                 ">",
                 "aqi",
-                50
+                150
             ]
         ],
         "paint": {
@@ -152,7 +186,7 @@ map.on('style.load', function(e) {
     });
 
     // Fetch Air Quality Index data feed
-    var airQuality = {};
+    var airQuality = [];
 
     // aqicn.org
     var xhrAQICN = new XMLHttpRequest();
@@ -164,7 +198,7 @@ map.on('style.load', function(e) {
                 return (k === "aqi") ? parseInt(v) : v;
             });
 
-            console.log(response);
+            // console.log(response);
             // Update properties
             for (var row in response) {
                 response[row]["id"] = response[row]["idx"];
@@ -202,22 +236,37 @@ map.on('style.load', function(e) {
         }
     }
 
+    // Update the feeds
     xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
     xhrINDIASPEND.send(null);
-    // var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
-    // xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
-    // xhrAQICN.send(null);
+
+    map.on('moveend', function(e) {
+        var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
+        xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
+        xhrAQICN.send(null);
+    });
+    map.fire('moveend');
 
     // Update the datasets with the latest feed and redraw the map
     function updateDataLayer(layerID, feed) {
 
         if (layerID == 'aqi') {
-            var source = GeoJSON.parse(feed, {
+
+            // Remove any existing data from the same source and concat the feed
+            for (var row in airQuality) {
+                if (airQuality[row].source == feed[0].source)
+                    airQuality.splice(row, 1);
+            }
+            airQuality = airQuality.concat(feed);
+
+            // console.log(airQuality);
+
+            var data = GeoJSON.parse(airQuality, {
                 Point: ['lat', 'lon'],
                 include: ['id', 'name', 'aqi', 'source', 'time']
             })
-            console.log(source);
-            aqiDataLayer.setData(source);
+
+            aqiDataLayer.setData(data);
         }
 
     }
