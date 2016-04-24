@@ -153,26 +153,25 @@ map.on('style.load', function(e) {
 
     // Fetch Air Quality Index data feed
     var airQuality={};
-    
+
     // aqicn.org
     var xhrAQICN = new XMLHttpRequest();
     xhrAQICN.onreadystatechange = function() {
 
         if (xhrAQICN.readyState == XMLHttpRequest.DONE) {
 
-            var airQualityRaw;
-            airQualityRaw = JSON.parse(xhrAQICN.responseText.substring(13, xhrAQICN.responseText.length - 1), function(k, v) {
+            var response = JSON.parse(xhrAQICN.responseText.substring(13, xhrAQICN.responseText.length - 1), function(k, v) {
                 return (k === "aqi") ? parseInt(v) : v;
             });
 
             // console.log(airQualityRaw);
-            var airQuality = GeoJSON.parse(airQualityRaw, {
+            var responseGeo = GeoJSON.parse(response, {
                 Point: ['lat', 'lon'],
                 include: ['name', 'city', 'aqi']
             })
 
             // Update the data
-            aqiDataLayer.setData(airQuality);
+            updateDataLayer(responseGeo, airQuality);
 
         }
     }
@@ -183,25 +182,32 @@ map.on('style.load', function(e) {
 
         if (xhrINDIASPEND.readyState == XMLHttpRequest.DONE) {
 
-            var airQualityRaw;
-            airQualityRaw = JSON.parse(xhrINDIASPEND.responseText);
+            var response = JSON.parse(xhrINDIASPEND.responseText);
 
             // console.log(airQualityRaw);
-            var airQuality = GeoJSON.parse(airQualityRaw, {
+            var responseGeo = GeoJSON.parse(response, {
                 Point: ['lat', 'lon'],
                 include: ['name', 'city', 'aqi']
             })
 
             // Update the data
-            aqiDataLayer.setData(airQuality);
+            updateDataLayer(responseGeo, airQuality);
 
         }
     }
 
-    xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
-    xhrINDIASPEND.send(null);
-    // xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((10.486331518916343,75.85197317812504),(14.348089290523568,81.03752005312504))', true);
-    // xhrAQICN.send(null);
+    // xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
+    // xhrINDIASPEND.send(null);
+    var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + + map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
+
+    xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
+    xhrAQICN.send(null);
+
+    // Update the datasets with the latest feed and redraw the map
+    function updateDataLayer(source, target){
+      console.log(source);
+      aqiDataLayer.setData(source);
+    }
 
 
 });
