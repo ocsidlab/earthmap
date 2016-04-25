@@ -20,13 +20,13 @@ map.on('style.load', function(e) {
     map.addSource('aqi', aqiDataLayer);
 
     map.addLayer({
-        "id": "aqi-50",
+        "id": "aqi-10",
         "type": "circle",
         "source": "aqi",
         "filter": [
             "<",
             "aqi",
-            50
+            10
         ],
         "paint": {
             "circle-color": "hsl(221, 100%, 60%)",
@@ -47,7 +47,7 @@ map.on('style.load', function(e) {
         }
     });
     map.addLayer({
-        "id": "aqi-20-50",
+        "id": "aqi-10-50",
         "type": "circle",
         "source": "aqi",
         "filter": [
@@ -59,11 +59,11 @@ map.on('style.load', function(e) {
             [
                 ">",
                 "aqi",
-                20
+                10
             ]
         ],
         "paint": {
-            "circle-color": "hsl(196, 100%, 50%)",
+            "circle-color": "green",
             "circle-blur": 2,
             "circle-radius": {
                 "base": 1,
@@ -81,14 +81,14 @@ map.on('style.load', function(e) {
         }
     });
     map.addLayer({
-        "id": "aqi-50-150",
+        "id": "aqi-50-100",
         "type": "circle",
         "source": "aqi",
         "filter": [
             "all", [
                 "<",
                 "aqi",
-                150
+                100
             ],
             [
                 ">",
@@ -97,7 +97,7 @@ map.on('style.load', function(e) {
             ]
         ],
         "paint": {
-            "circle-color": "hsl(108, 100%, 50%)",
+            "circle-color": "yellow",
             "circle-blur": 2,
             "circle-radius": {
                 "base": 1,
@@ -115,14 +115,48 @@ map.on('style.load', function(e) {
         }
     });
     map.addLayer({
-        "id": "aqi-150-250",
+        "id": "aqi-100-150",
         "type": "circle",
         "source": "aqi",
         "filter": [
             "all", [
                 "<",
                 "aqi",
-                250
+                150
+            ],
+            [
+                ">",
+                "aqi",
+                100
+            ]
+        ],
+        "paint": {
+            "circle-color": "orange",
+            "circle-blur": 2,
+            "circle-radius": {
+                "base": 1,
+                "stops": [
+                    [
+                        4,
+                        15
+                    ],
+                    [
+                        13,
+                        40
+                    ]
+                ]
+            }
+        }
+    });
+    map.addLayer({
+        "id": "aqi-150-200",
+        "type": "circle",
+        "source": "aqi",
+        "filter": [
+            "all", [
+                "<",
+                "aqi",
+                200
             ],
             [
                 ">",
@@ -131,7 +165,7 @@ map.on('style.load', function(e) {
             ]
         ],
         "paint": {
-            "circle-color": "hsl(48, 100%, 50%)",
+            "circle-color": "red",
             "circle-blur": 2,
             "circle-radius": {
                 "base": 1,
@@ -149,7 +183,41 @@ map.on('style.load', function(e) {
         }
     });
     map.addLayer({
-        "id": "aqi-250-400",
+        "id": "aqi-200-300",
+        "type": "circle",
+        "source": "aqi",
+        "filter": [
+            "all", [
+                "<",
+                "aqi",
+                300
+            ],
+            [
+                ">",
+                "aqi",
+                200
+            ]
+        ],
+        "paint": {
+            "circle-color": "purple",
+            "circle-blur": 2,
+            "circle-radius": {
+                "base": 1,
+                "stops": [
+                    [
+                        4,
+                        15
+                    ],
+                    [
+                        13,
+                        40
+                    ]
+                ]
+            }
+        }
+    });
+    map.addLayer({
+        "id": "aqi-300-400",
         "type": "circle",
         "source": "aqi",
         "filter": [
@@ -161,11 +229,11 @@ map.on('style.load', function(e) {
             [
                 ">",
                 "aqi",
-                250
+                300
             ]
         ],
         "paint": {
-            "circle-color": "hsl(0, 100%, 51%)",
+            "circle-color": "maroon",
             "circle-blur": 2,
             "circle-radius": {
                 "base": 1,
@@ -192,7 +260,7 @@ map.on('style.load', function(e) {
             400
         ],
         "paint": {
-            "circle-color": "hsl(0, 91%, 19%)",
+            "circle-color": "hsl(0, 0%, 0%)",
             "circle-blur": 2,
             "circle-radius": {
                 "base": 1,
