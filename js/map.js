@@ -282,9 +282,14 @@ map.on('style.load', function(e) {
         "type": "symbol",
         "source": "aqi",
         "minzoom": 8,
+        "paint": {
+          "text-halo-color": "white",
+          "text-halo-width": 1,
+          "text-halo-blur": 3
+        },
         "layout": {
-            "text-field": "AQI: {aqi} {name}",
-            "text-size": 10
+            "text-field": "AQI: {aqi}",
+            "text-size": 12
         }
     });
 
