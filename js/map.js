@@ -324,6 +324,7 @@ map.on('style.load', function(e) {
     }
 
     // IndiaSpend #breathe
+    // API
     var xhrINDIASPEND = new XMLHttpRequest();
     xhrINDIASPEND.onreadystatechange = function() {
 
@@ -336,6 +337,41 @@ map.on('style.load', function(e) {
                 response[row]["source"] = "IndiaSpend";
             }
 
+            console.log(response);
+
+            // Update the data
+            updateDataLayer("aqi", response);
+
+        }
+    }
+
+    // Hindustan Times
+    // http://airquality.hindustantimes.com/?city=Haldia
+
+    // Aircasting
+    // API https://github.com/HabitatMap/AirCasting/blob/master/doc/api.md
+
+    // Open AQ
+    // API https://docs.openaq.org/
+
+    // India Open Data Association
+    // API http://openenvironment.indiaopendata.com/#/openapi/#Public%20API
+    var xhrIOD = new XMLHttpRequest();
+    xhrIOD.onreadystatechange = function() {
+
+        if (xhrIOD.readyState == XMLHttpRequest.DONE) {
+
+            var response = JSON.parse(xhrIOD.responseText)[0];
+
+            // Update properties
+            for (var row in response) {
+                response[row]["id"] = response[row]["deviceId"];
+                response[row]["lat"] = response[row]["latitude"];
+                response[row]["lon"] = response[row]["longitude"];
+                response[row]["name"] = response[row]["label"];
+                response[row]["source"] = response[row]["type"];
+            }
+
             // console.log(response);
 
             // Update the data
@@ -345,6 +381,9 @@ map.on('style.load', function(e) {
     }
 
     // Update the feeds
+    xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
+    xhrIOD.send(null);
+
     xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
     xhrINDIASPEND.send(null);
 
@@ -367,7 +406,7 @@ map.on('style.load', function(e) {
             }
             airQuality = airQuality.concat(feed);
 
-            // console.log(airQuality);
+            console.log(airQuality);
 
             var data = GeoJSON.parse(airQuality, {
                 Point: ['lat', 'lon'],
