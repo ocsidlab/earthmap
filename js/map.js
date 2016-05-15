@@ -226,15 +226,16 @@ map.on('style.load', function(e) {
         "id": "aqi-labels",
         "type": "symbol",
         "source": "aqi",
-        "minzoom": 8,
+        "minzoom": 10,
         "paint": {
-            "text-halo-color": "white",
+            "text-halo-color": "black",
             "text-halo-width": 1,
-            "text-halo-blur": 3
+            "text-halo-blur": 3,
+            "text-color" : "yellow"
         },
         "layout": {
             "text-field": "AQI: {aqi}",
-            "text-size": 12
+            "text-size": 8
         }
     });
 
@@ -353,7 +354,7 @@ map.on('style.load', function(e) {
                 }
             }
 
-            console.log(response);
+            // console.log(response);
 
             // Update the data
             updateDataLayer("aqi", response);

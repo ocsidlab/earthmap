@@ -18,6 +18,13 @@
   .aqi{
     font-size: 30px;
   }
+  .map-overlay{
+    opacity: 0.1;
+    max-width: 25%;
+  }
+  .map-overlay:hover{
+    opacity: 1;
+  }
   </style>
 </head>
 
@@ -32,13 +39,11 @@
 
 
 
-    <div style="position: absolute;">
+    <div class="map-overlay" style="position: absolute;">
       <div class='pad1 info'>
-
-
           <div class='fill-lighten3 round pad2'>
             <h1 class='fancy'>Air, Water and Earth</h1>
-            <p>See realtime environment data from <a href="http://aqicn.org/city/beijing/">AQICN</a> and <a href="http://aqi.indiaspend.org/aq/breathe/">IndiaSpend#breathe</a>. <small><a href="https://github.com/4thmain/earthmap">Contribute</a></small></p>
+            <p>Explore realtime air quality data from <a href="http://aqicn.org/city/beijing/">AQICN</a>, <a href="http://aqi.indiaspend.org/aq/breathe/">IndiaSpend#breathe</a>, <a href="https://openaq.org/#/">OpenAQ</a>, <a href="http://openenvironment.indiaopendata.com">India Open Data Association</a>. <small><a href="https://github.com/4thmain/earthmap">Contribute</a></small></p>
           </div>
       </div>
       <!-- <div class='pill pad1 toggles'>
