@@ -2,7 +2,7 @@
 mapboxgl.accessToken = 'pk.eyJ1IjoidG91Y2hzdG9uZWlzdCIsImEiOiJ2OGR5bHhjIn0.WA2NKklxU9FyuU2q44MdjQ';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/touchstoneist/cindi7tv50100cxnhxul9uwtf', //stylesheet location
+    style: 'mapbox://styles/mapbox/dark-v9', //stylesheet location
     hash: true,
     zoom: 4,
     center: [79.0806091, 21.1498041]
@@ -19,284 +19,207 @@ map.on('style.load', function(e) {
     var aqiDataLayer = new mapboxgl.GeoJSONSource();
     map.addSource('aqi', aqiDataLayer);
 
-    map.addLayer({
-        "id": "aqi",
-        "type": "circle",
-        "source": "aqi",
-        "paint": {
-            "circle-opacity": 0.1,
-            "circle-color": "white",
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
+    var aqiCircleSize = {
+            "base": 1,
+            "stops": [
+                [
+                    2,
+                    4
+                ],
+                [
+                    13,
+                    40
                 ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-10",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "<",
-            "aqi",
-            10
-        ],
-        "paint": {
-            "circle-color": "hsl(221, 100%, 60%)",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-10-50",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                50
-            ],
-            [
-                ">",
-                "aqi",
-                10
             ]
-        ],
-        "paint": {
-            "circle-color": "green",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
         }
-    });
+        // map.addLayer({
+        //     "id": "aqi-10",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "<",
+        //         "aqi",
+        //         10
+        //     ],
+        //     "paint": {
+        //         "circle-color": "hsl(221, 100%, 60%)",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-10-50",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             50
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             10
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "green",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-50-100",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             100
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             50
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "yellow",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-100-150",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             150
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             100
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "orange",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-150-200",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             200
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             150
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "red",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-200-300",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             300
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             200
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "purple",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
+        // map.addLayer({
+        //     "id": "aqi-300-400",
+        //     "type": "circle",
+        //     "source": "aqi",
+        //     "filter": [
+        //         "all", [
+        //             "<",
+        //             "aqi",
+        //             400
+        //         ],
+        //         [
+        //             ">",
+        //             "aqi",
+        //             300
+        //         ]
+        //     ],
+        //     "paint": {
+        //         "circle-color": "maroon",
+        //         "circle-blur": 2,
+        //         "circle-radius": aqiCircleSize
+        //     }
+        // });
     map.addLayer({
-        "id": "aqi-50-100",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                100
-            ],
-            [
-                ">",
-                "aqi",
-                50
-            ]
-        ],
-        "paint": {
-            "circle-color": "yellow",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-100-150",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                150
-            ],
-            [
-                ">",
-                "aqi",
-                100
-            ]
-        ],
-        "paint": {
-            "circle-color": "orange",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-150-200",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                200
-            ],
-            [
-                ">",
-                "aqi",
-                150
-            ]
-        ],
-        "paint": {
-            "circle-color": "red",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-200-300",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                300
-            ],
-            [
-                ">",
-                "aqi",
-                200
-            ]
-        ],
-        "paint": {
-            "circle-color": "purple",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-300-400",
-        "type": "circle",
-        "source": "aqi",
-        "filter": [
-            "all", [
-                "<",
-                "aqi",
-                400
-            ],
-            [
-                ">",
-                "aqi",
-                300
-            ]
-        ],
-        "paint": {
-            "circle-color": "maroon",
-            "circle-blur": 2,
-            "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
-                ]
-            }
-        }
-    });
-    map.addLayer({
-        "id": "aqi-400",
+        "id": "aqi-color",
         "type": "circle",
         "source": "aqi",
         "filter": [
             ">",
             "aqi",
-            400
+            0
         ],
         "paint": {
-            "circle-color": "hsl(0, 0%, 0%)",
+            "circle-color": {
+                property: 'aqi',
+                stops: [
+                    [0, 'rgb(198, 243, 255)'],
+                    [10, 'rgb(82, 237, 247)'],
+                    [40, 'rgb(136, 250, 126)'],
+                    [100, '#e6e05e'],
+                    [200, '#e55e5e'],
+                    [300, '#ff0000'],
+                    [500, '#e51df0']
+                ]
+            },
             "circle-blur": 2,
             "circle-radius": {
-                "base": 1,
-                "stops": [
-                    [
-                        4,
-                        15
-                    ],
-                    [
-                        13,
-                        40
-                    ]
+                property: 'aqi',
+                stops: [
+                    [0, 5],
+                    [200, 10],
+                    [400, 20]
                 ]
-            }
+            },
+        }
+    });
+    map.addLayer({
+        "id": "aqi",
+        "type": "circle",
+        "source": "aqi",
+        "paint": {
+            "circle-color": "white",
+            "circle-radius": 1,
+            "circle-blur": 1
         }
     });
     map.addLayer({
@@ -468,19 +391,21 @@ map.on('style.load', function(e) {
 
     // Update the feeds
     xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
-    xhrOAQ.send({limit:500});
+    xhrOAQ.send({
+        limit: 500
+    });
 
-    // xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
-    // xhrIOD.send(null);
-    //
-    // xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
-    // xhrINDIASPEND.send(null);
-    //
-    // map.on('moveend', function(e) {
-    //     var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
-    //     xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
-    //     xhrAQICN.send(null);
-    // });
+    xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
+    xhrIOD.send(null);
+
+    xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
+    xhrINDIASPEND.send(null);
+
+    map.on('moveend', function(e) {
+        var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
+        xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
+        xhrAQICN.send(null);
+    });
     map.fire('moveend');
 
     // Update the datasets with the latest feed and redraw the map
@@ -518,7 +443,7 @@ map.on('click', function(e) {
 
     // Popups from AQI layers
     // Show popup of feature from an OSM layer
-    var features = map.queryRenderedFeatures(e.point, {
+    var features = map.queryRenderedFeatures([[e.point.x-3,e.point.y-3],[e.point.x+3,e.point.y+3]], {
         layers: ['aqi']
     })
 
@@ -569,7 +494,7 @@ function AQIPM25(Concentration) {
     } else if (c >= 350.5 && c < 500.5) {
         AQI = Linear(500, 401, 500.4, 350.5, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -594,7 +519,7 @@ function AQIPM10(Concentration) {
     } else if (c >= 505 && c < 605) {
         AQI = Linear(500, 401, 604, 505, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -619,7 +544,7 @@ function AQICO(Concentration) {
     } else if (c >= 40.5 && c < 50.5) {
         AQI = Linear(500, 401, 50.4, 40.5, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -640,7 +565,7 @@ function AQISO21hr(Concentration) {
     } else if (c >= 304 && c <= 604) {
         AQI = "SO21hrmessage";
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -659,7 +584,7 @@ function AQISO224hr(Concentration) {
     } else if (c >= 805 && c <= 1004) {
         AQI = Linear(500, 401, 1004, 805, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -683,7 +608,7 @@ function AQIOzone8hr(Concentration) {
     } else if (c >= .375 && c < .605) {
         AQI = "O3message";
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -707,7 +632,7 @@ function AQIOzone1hr(Concentration) {
 
         AQI = Linear(500, 401, .604, .505, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -732,7 +657,7 @@ function AQINO2(Concentration) {
     } else if (c >= 1.650 && c <= 2.049) {
         AQI = Linear(500, 401, 2.049, 1.650, c);
     } else {
-        AQI = "Out of Range";
+        AQI = -1;
     }
     return AQI;
 }
@@ -755,7 +680,7 @@ function AQICategory(AQIndex) {
     } else if (AQI > 400 && AQI <= 500) {
         AQICategory = "Hazardous";
     } else {
-        AQICategory = "Out of Range";
+        AQICategory = -1;
     }
     return AQICategory;
 }
