@@ -20,6 +20,28 @@ map.on('style.load', function(e) {
     map.addSource('aqi', aqiDataLayer);
 
     map.addLayer({
+        "id": "aqi",
+        "type": "circle",
+        "source": "aqi",
+        "paint": {
+            "circle-opacity": 0.1,
+            "circle-color": "white",
+            "circle-radius": {
+                "base": 1,
+                "stops": [
+                    [
+                        4,
+                        15
+                    ],
+                    [
+                        13,
+                        40
+                    ]
+                ]
+            }
+        }
+    });
+    map.addLayer({
         "id": "aqi-10",
         "type": "circle",
         "source": "aqi",
@@ -283,9 +305,9 @@ map.on('style.load', function(e) {
         "source": "aqi",
         "minzoom": 8,
         "paint": {
-          "text-halo-color": "white",
-          "text-halo-width": 1,
-          "text-halo-blur": 3
+            "text-halo-color": "white",
+            "text-halo-width": 1,
+            "text-halo-blur": 3
         },
         "layout": {
             "text-field": "AQI: {aqi}",
@@ -362,24 +384,55 @@ map.on('style.load', function(e) {
 
             // Update properties
             for (var row in response) {
-              try{
-                response[row]["lat"] = response[row]["coordinates"]["latitude"];
-                response[row]["lon"] = response[row]["coordinates"]["longitude"];
-              }
-              catch(e){
-                response[row]["lat"] = 20;
-                response[row]["lon"] = 20;
-                console.log('Missing data',row,response[row]);
+                try {
+                    response[row]["lat"] = response[row]["coordinates"]["latitude"];
+                    response[row]["lon"] = response[row]["coordinates"]["longitude"];
+                } catch (e) {
+                    response[row]["lat"] = 0;
+                    response[row]["lon"] = 0;
+                    console.log('Missing coordinates', row, response[row]);
 
-              }finally{
-                response[row]["id"] = "";
-                response[row]["aqi"] = response[row]["measurements"][0]["value"];
-                response[row]["name"] = response[row]["city"];
-                response[row]["source"] = "OAQ";
-              }
+                } finally {
+                    response[row]["id"] = "";
+                    response[row]["aqi"] = response[row]["measurements"][0]["value"];
+                    response[row]["name"] = response[row]["city"];
+                    response[row]["source"] = "OAQ";
+                    response[row]["aqi"] = response[row]["measurements"][0]["value"];
+                    // Calculate AQI for each measurement
+                    for (var i in response[row]["measurements"]) {
+                        response[row]["aqi"] = -1;
+                        switch (response[row]["measurements"][i]["parameter"]) {
+                            case "pm10":
+                                response[row]["measurements"][i]["aqi"] = AQIPM10(response[row]["measurements"][i]["value"]);
+                                break;
+                            case "pm25":
+                                response[row]["measurements"][i]["aqi"] = AQIPM25(response[row]["measurements"][i]["value"]);
+                                break;
+                            case "o3":
+                                response[row]["measurements"][i]["aqi"] = AQIOzone8hr(response[row]["measurements"][i]["value"]);
+                                break;
+                            case "no2":
+                                response[row]["measurements"][i]["aqi"] = AQINO2(response[row]["measurements"][i]["value"]);
+                                break;
+                            case "so2":
+                                response[row]["measurements"][i]["aqi"] = AQISO224hr(response[row]["measurements"][i]["value"]);
+                                break;
+                            case "co":
+                                response[row]["measurements"][i]["aqi"] = AQICO(response[row]["measurements"][i]["value"]);
+                                break;
+                            default:
+                                response[row]["measurements"][i]["aqi"] = -1;
+                        }
+                        // Measure overall AQI by picking maximum
+                        response[row]["aqi"] = Math.max(response[row]["aqi"], response[row]["measurements"][i]["aqi"]);
+                    }
+
+
+
+                }
             }
 
-            // console.log(response);
+            console.log(response);
 
             // Update the data
             updateDataLayer("aqi", response);
@@ -415,19 +468,19 @@ map.on('style.load', function(e) {
 
     // Update the feeds
     xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
-    xhrOAQ.send(null);
+    xhrOAQ.send({limit:500});
 
-    xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
-    xhrIOD.send(null);
-
-    xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
-    xhrINDIASPEND.send(null);
-
-    map.on('moveend', function(e) {
-        var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
-        xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
-        xhrAQICN.send(null);
-    });
+    // xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
+    // xhrIOD.send(null);
+    //
+    // xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
+    // xhrINDIASPEND.send(null);
+    //
+    // map.on('moveend', function(e) {
+    //     var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
+    //     xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
+    //     xhrAQICN.send(null);
+    // });
     map.fire('moveend');
 
     // Update the datasets with the latest feed and redraw the map
@@ -442,18 +495,267 @@ map.on('style.load', function(e) {
             }
             airQuality = airQuality.concat(feed);
 
-            // console.log(airQuality);
-
-            var data = GeoJSON.parse(airQuality, {
+            // Convert JSON data to GeoJSON
+            GeoJSON.parse(airQuality, {
                 Point: ['lat', 'lon'],
-                include: ['id', 'name', 'aqi', 'source', 'time']
-            })
+                include: ['id', 'name', 'measurements', 'aqi', 'source', 'time']
+            }, function(geojson) {
+                // console.log(airQuality); // JSON
+                console.log(JSON.stringify(geojson)); //GeoJSON
+                console.log("AQI data:", geojson);
+                aqiDataLayer.setData(geojson);
+            });
 
-            console.log(JSON.stringify(data));
-            aqiDataLayer.setData(data);
+
         }
 
     }
 
-
 });
+
+// Add interactivity
+map.on('click', function(e) {
+
+    // Popups from AQI layers
+    // Show popup of feature from an OSM layer
+    var features = map.queryRenderedFeatures(e.point, {
+        layers: ['aqi']
+    })
+
+    if (features.length) {
+        var popupHTML = "<strong>" + features[0]["properties"]["name"] + "</strong><br>";
+        popupHTML += "<span class='aqi'>" + features[0]["properties"]["aqi"] + "</span> <a href=''>Air Quality Index</a><br>";
+        popupHTML += "Source: " + features[0]["properties"]["source"];
+
+        var popup = new mapboxgl.Popup()
+            .setLngLat(features[0].geometry.coordinates)
+            .setHTML(popupHTML)
+            .addTo(map);
+    }
+
+    console.log(features);
+
+})
+
+// Concentration to AQI calculator for openaq
+// https://airnow.gov/index.cfm?action=resources.conc_aqi_calc
+
+function Linear(AQIhigh, AQIlow, Conchigh, Conclow, Concentration) {
+    var linear;
+    var Conc = parseFloat(Concentration);
+    var a;
+    a = ((Conc - Conclow) / (Conchigh - Conclow)) * (AQIhigh - AQIlow) + AQIlow;
+    linear = Math.round(a);
+    return linear;
+}
+
+function AQIPM25(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = (Math.floor(10 * Conc)) / 10;
+    if (c >= 0 && c < 12.1) {
+        AQI = Linear(50, 0, 12, 0, c);
+    } else if (c >= 12.1 && c < 35.5) {
+        AQI = Linear(100, 51, 35.4, 12.1, c);
+    } else if (c >= 35.5 && c < 55.5) {
+        AQI = Linear(150, 101, 55.4, 35.5, c);
+    } else if (c >= 55.5 && c < 150.5) {
+        AQI = Linear(200, 151, 150.4, 55.5, c);
+    } else if (c >= 150.5 && c < 250.5) {
+        AQI = Linear(300, 201, 250.4, 150.5, c);
+    } else if (c >= 250.5 && c < 350.5) {
+        AQI = Linear(400, 301, 350.4, 250.5, c);
+    } else if (c >= 350.5 && c < 500.5) {
+        AQI = Linear(500, 401, 500.4, 350.5, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+//line63
+function AQIPM10(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = Math.floor(Conc);
+    if (c >= 0 && c < 55) {
+        AQI = Linear(50, 0, 54, 0, c);
+    } else if (c >= 55 && c < 155) {
+        AQI = Linear(100, 51, 154, 55, c);
+    } else if (c >= 155 && c < 255) {
+        AQI = Linear(150, 101, 254, 155, c);
+    } else if (c >= 255 && c < 355) {
+        AQI = Linear(200, 151, 354, 255, c);
+    } else if (c >= 355 && c < 425) {
+        AQI = Linear(300, 201, 424, 355, c);
+    } else if (c >= 425 && c < 505) {
+        AQI = Linear(400, 301, 504, 425, c);
+    } else if (c >= 505 && c < 605) {
+        AQI = Linear(500, 401, 604, 505, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+//line104
+function AQICO(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = (Math.floor(10 * Conc)) / 10;
+    if (c >= 0 && c < 4.5) {
+        AQI = Linear(50, 0, 4.4, 0, c);
+    } else if (c >= 4.5 && c < 9.5) {
+        AQI = Linear(100, 51, 9.4, 4.5, c);
+    } else if (c >= 9.5 && c < 12.5) {
+        AQI = Linear(150, 101, 12.4, 9.5, c);
+    } else if (c >= 12.5 && c < 15.5) {
+        AQI = Linear(200, 151, 15.4, 12.5, c);
+    } else if (c >= 15.5 && c < 30.5) {
+        AQI = Linear(300, 201, 30.4, 15.5, c);
+    } else if (c >= 30.5 && c < 40.5) {
+        AQI = Linear(400, 301, 40.4, 30.5, c);
+    } else if (c >= 40.5 && c < 50.5) {
+        AQI = Linear(500, 401, 50.4, 40.5, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+//line145
+function AQISO21hr(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = Math.floor(Conc);
+    if (c >= 0 && c < 36) {
+        AQI = Linear(50, 0, 35, 0, c);
+    } else if (c >= 36 && c < 76) {
+        AQI = Linear(100, 51, 75, 36, c);
+    } else if (c >= 76 && c < 186) {
+        AQI = Linear(150, 101, 185, 76, c);
+    } else if (c >= 186 && c <= 304) {
+        AQI = Linear(200, 151, 304, 186, c);
+    } else if (c >= 304 && c <= 604) {
+        AQI = "SO21hrmessage";
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+
+function AQISO224hr(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = Math.floor(Conc);
+    if (c >= 0 && c <= 304) {
+        AQI = "SO224hrmessage";
+    } else if (c >= 304 && c < 605) {
+        AQI = Linear(300, 201, 604, 305, c);
+    } else if (c >= 605 && c < 805) {
+        AQI = Linear(400, 301, 804, 605, c);
+    } else if (c >= 805 && c <= 1004) {
+        AQI = Linear(500, 401, 1004, 805, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+//line186
+function AQIOzone8hr(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = (Math.floor(Conc)) / 1000;
+
+    if (c >= 0 && c < .060) {
+        AQI = Linear(50, 0, 0.059, 0, c);
+    } else if (c >= .060 && c < .076) {
+        AQI = Linear(100, 51, .075, .060, c);
+    } else if (c >= .076 && c < .096) {
+        AQI = Linear(150, 101, .095, .076, c);
+    } else if (c >= .096 && c < .116) {
+        AQI = Linear(200, 151, .115, .096, c);
+    } else if (c >= .116 && c < .375) {
+        AQI = Linear(300, 201, .374, .116, c);
+    } else if (c >= .375 && c < .605) {
+        AQI = "O3message";
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+//line219
+
+function AQIOzone1hr(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = (Math.floor(Conc)) / 1000;
+    if (c >= .125 && c < .165) {
+        AQI = Linear(150, 101, .164, .125, c);
+    } else if (c >= .165 && c < .205) {
+        AQI = Linear(200, 151, .204, .165, c);
+    } else if (c >= .205 && c < .405) {
+        AQI = Linear(300, 201, .404, .205, c);
+    } else if (c >= .405 && c < .505) {
+        AQI = Linear(400, 301, .504, .405, c);
+    } else if (c >= .505 && c < .605) {
+
+
+        AQI = Linear(500, 401, .604, .505, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+
+function AQINO2(Concentration) {
+    var Conc = parseFloat(Concentration);
+    var c;
+    var AQI;
+    c = (Math.floor(Conc)) / 1000;
+    if (c >= 0 && c < .054) {
+        AQI = Linear(50, 0, .053, 0, c);
+    } else if (c >= .054 && c < .101) {
+        AQI = Linear(100, 51, .100, .054, c);
+    } else if (c >= .101 && c < .361) {
+        AQI = Linear(150, 101, .360, .101, c);
+    } else if (c >= .361 && c < .650) {
+        AQI = Linear(200, 151, .649, .361, c);
+    } else if (c >= .650 && c < 1.250) {
+        AQI = Linear(300, 201, 1.249, .650, c);
+    } else if (c >= 1.250 && c < 1.650) {
+        AQI = Linear(400, 301, 1.649, 1.250, c);
+    } else if (c >= 1.650 && c <= 2.049) {
+        AQI = Linear(500, 401, 2.049, 1.650, c);
+    } else {
+        AQI = "Out of Range";
+    }
+    return AQI;
+}
+
+function AQICategory(AQIndex) {
+    var AQI = parseFloat(AQIndex)
+    var AQICategory;
+    if (AQI <= 50) {
+        AQICategory = "Good";
+    } else if (AQI > 50 && AQI <= 100) {
+        AQICategory = "Moderate";
+    } else if (AQI > 100 && AQI <= 150) {
+        AQICategory = "Unhealthy for Sensitive Groups";
+    } else if (AQI > 150 && AQI <= 200) {
+        AQICategory = "Unhealthy";
+    } else if (AQI > 200 && AQI <= 300) {
+        AQICategory = "Very Unhealthy";
+    } else if (AQI > 300 && AQI <= 400) {
+        AQICategory = "Hazardous";
+    } else if (AQI > 400 && AQI <= 500) {
+        AQICategory = "Hazardous";
+    } else {
+        AQICategory = "Out of Range";
+    }
+    return AQICategory;
+}
