@@ -1,8 +1,8 @@
 // Add a map
-mapboxgl.accessToken = 'pk.eyJ1IjoidG91Y2hzdG9uZWlzdCIsImEiOiJ2OGR5bHhjIn0.WA2NKklxU9FyuU2q44MdjQ';
+mapboxgl.accessToken = 'pk.eyJ1IjoicGxhbmVtYWQiLCJhIjoiemdYSVVLRSJ9.g3lbg_eN0kztmsfIPxa9MQ';
 var map = new mapboxgl.Map({
     container: 'map', // container id
-    style: 'mapbox://styles/mapbox/dark-v9', //stylesheet location
+    style: 'mapbox://styles/planemad/cio8y8afz0033b3nfh3ipli4i', //stylesheet location
     hash: true,
     zoom: 4,
     center: [79.0806091, 21.1498041]
@@ -349,8 +349,6 @@ map.on('style.load', function(e) {
                         // Measure overall AQI by picking maximum
                         response[row]["aqi"] = Math.max(response[row]["aqi"], response[row]["measurements"][i]["aqi"]);
                     }
-
-
 
                 }
             }
