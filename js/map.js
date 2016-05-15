@@ -353,6 +353,39 @@ map.on('style.load', function(e) {
 
     // Open AQ
     // API https://docs.openaq.org/
+    var xhrOAQ = new XMLHttpRequest();
+    xhrOAQ.onreadystatechange = function() {
+
+        if (xhrOAQ.readyState == XMLHttpRequest.DONE) {
+
+            var response = JSON.parse(xhrOAQ.responseText).results;
+
+            // Update properties
+            for (var row in response) {
+              try{
+                response[row]["lat"] = response[row]["coordinates"]["latitude"];
+                response[row]["lon"] = response[row]["coordinates"]["longitude"];
+              }
+              catch(e){
+                response[row]["lat"] = 20;
+                response[row]["lon"] = 20;
+                console.log('Missing data',row,response[row]);
+
+              }finally{
+                response[row]["id"] = "";
+                response[row]["aqi"] = response[row]["measurements"][0]["value"];
+                response[row]["name"] = response[row]["city"];
+                response[row]["source"] = "OAQ";
+              }
+            }
+
+            // console.log(response);
+
+            // Update the data
+            updateDataLayer("aqi", response);
+
+        }
+    }
 
     // India Open Data Association
     // API http://openenvironment.indiaopendata.com/#/openapi/#Public%20API
@@ -381,6 +414,9 @@ map.on('style.load', function(e) {
     }
 
     // Update the feeds
+    xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
+    xhrOAQ.send(null);
+
     xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
     xhrIOD.send(null);
 
@@ -406,13 +442,14 @@ map.on('style.load', function(e) {
             }
             airQuality = airQuality.concat(feed);
 
-            console.log(airQuality);
+            // console.log(airQuality);
 
             var data = GeoJSON.parse(airQuality, {
                 Point: ['lat', 'lon'],
                 include: ['id', 'name', 'aqi', 'source', 'time']
             })
 
+            console.log(JSON.stringify(data));
             aqiDataLayer.setData(data);
         }
 
