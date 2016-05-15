@@ -5,7 +5,8 @@ var map = new mapboxgl.Map({
     style: 'mapbox://styles/planemad/cio8y8afz0033b3nfh3ipli4i', //stylesheet location
     hash: true,
     zoom: 4,
-    center: [79.0806091, 21.1498041]
+    center: [79.0806091, 21.1498041],
+    pitch: 30
 });
 
 // map.addControl(new mapboxgl.Geocoder({'position':'top-right'}));
