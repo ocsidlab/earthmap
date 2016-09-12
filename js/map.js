@@ -19,167 +19,7 @@ map.on('style.load', function(e) {
     // Add AQI source and layers
     var aqiDataLayer = new mapboxgl.GeoJSONSource();
     map.addSource('aqi', aqiDataLayer);
-
-    var aqiCircleSize = {
-            "base": 1,
-            "stops": [
-                [
-                    2,
-                    4
-                ],
-                [
-                    13,
-                    40
-                ]
-            ]
-        }
-        // map.addLayer({
-        //     "id": "aqi-10",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "<",
-        //         "aqi",
-        //         10
-        //     ],
-        //     "paint": {
-        //         "circle-color": "hsl(221, 100%, 60%)",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-10-50",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             50
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             10
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "green",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-50-100",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             100
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             50
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "yellow",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-100-150",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             150
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             100
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "orange",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-150-200",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             200
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             150
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "red",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-200-300",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             300
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             200
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "purple",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
-        // map.addLayer({
-        //     "id": "aqi-300-400",
-        //     "type": "circle",
-        //     "source": "aqi",
-        //     "filter": [
-        //         "all", [
-        //             "<",
-        //             "aqi",
-        //             400
-        //         ],
-        //         [
-        //             ">",
-        //             "aqi",
-        //             300
-        //         ]
-        //     ],
-        //     "paint": {
-        //         "circle-color": "maroon",
-        //         "circle-blur": 2,
-        //         "circle-radius": aqiCircleSize
-        //     }
-        // });
+        
     map.addLayer({
         "id": "aqi-color",
         "type": "circle",
@@ -236,7 +76,12 @@ map.on('style.load', function(e) {
         },
         "layout": {
             "text-field": "AQI: {aqi}",
-            "text-size": 8
+            "text-size": {
+                "stops": [
+                        [12,8],
+                        [18,16]
+                    ]
+            }
         }
     });
 
