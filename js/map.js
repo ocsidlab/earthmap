@@ -150,7 +150,7 @@ map.on('style.load', function(e) {
                 response[row]["source"] = "IndiaSpend";
             }
 
-            console.log(response);
+            // console.log(response);
 
             // Update the data
             updateDataLayer("aqi", response);
@@ -236,7 +236,7 @@ map.on('style.load', function(e) {
 
         if (xhrIOD.readyState == XMLHttpRequest.DONE) {
 
-            var response = JSON.parse(xhrIOD.responseText)[0];
+            var response = JSON.parse(xhrIOD.responseText);
 
             // Update properties
             for (var row in response) {
@@ -257,13 +257,15 @@ map.on('style.load', function(e) {
 
     // Fetch the air quality data feeds
 
-    // xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
-    // xhrOAQ.send({
-    //     limit: 500
-    // });
+    xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest?limit=5000', true);
+    xhrOAQ.send({
+        limit: 500
+    });
 
-    // xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
-    // xhrIOD.send(null);
+    xhrIOD.open('GET', 'https://openenvironment.p.mashape.com/all/public/devices', true);
+    xhrIOD.setRequestHeader("X-Mashape-Key", '2l1wjDc9AfmshNynxyNBTtLu05m8p1wccaxjsnYFaKi1uKDBdb');
+    xhrIOD.setRequestHeader("Accept", 'application/json');
+    xhrIOD.send(null);
 
     xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
     xhrINDIASPEND.send(null);
@@ -293,8 +295,8 @@ map.on('style.load', function(e) {
                 include: ['id', 'name', 'measurements', 'aqi', 'source', 'time']
             }, function(geojson) {
                 // console.log(airQuality); // JSON
-                console.log(JSON.stringify(geojson)); //GeoJSON
-                // console.log("AQI data:", geojson);
+                // console.log(JSON.stringify(geojson)); //GeoJSON
+                console.log("AQI dump:", geojson);
                 map.getSource('aqi').setData(geojson);
             });
         }
