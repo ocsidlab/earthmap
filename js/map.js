@@ -1,3 +1,17 @@
+/*
+
+How the Earth map works
+
+1. Find an API or endpoint providing a live feed of field sensing devices that capture air pollution, temperature, humidity or other interesting probe values
+2. Write ana AJAX request to query the feed either on map load or at each map movement
+3. Remap the sensor values to a standard json format as defined in X
+4. Send the feed to updateDataLayer() with the layer name and the data to update
+ - This will first purge any existing data on the map from the same feed source
+ - The json feed is converted to a geojson
+ - And then append the new data from the feed to the aggregated store to visualize on the map
+
+*/
+
 // Add a map
 mapboxgl.accessToken = 'pk.eyJ1IjoicGxhbmVtYWQiLCJhIjoiemdYSVVLRSJ9.g3lbg_eN0kztmsfIPxa9MQ';
 var map = new mapboxgl.Map({
@@ -9,17 +23,24 @@ var map = new mapboxgl.Map({
     pitch: 30
 });
 
-// map.addControl(new mapboxgl.Geocoder({'position':'top-right'}));
+// Add geocoder
+map.addControl(new mapboxgl.Geocoder({
+    'position': 'top-right'
+}));
 
 
-
-// Create dynamic layer
 map.on('style.load', function(e) {
 
     // Add AQI source and layers
-    var aqiDataLayer = new mapboxgl.GeoJSONSource();
-    map.addSource('aqi', aqiDataLayer);
-        
+    map.addSource('aqi', {
+        'type': 'geojson',
+        'data': {
+            "type": "FeatureCollection",
+            "features": []
+        }
+    });
+
+    // The AQI style layer
     map.addLayer({
         "id": "aqi-color",
         "type": "circle",
@@ -72,20 +93,20 @@ map.on('style.load', function(e) {
             "text-halo-color": "black",
             "text-halo-width": 1,
             "text-halo-blur": 3,
-            "text-color" : "yellow"
+            "text-color": "yellow"
         },
         "layout": {
             "text-field": "AQI: {aqi}",
             "text-size": {
                 "stops": [
-                        [12,8],
-                        [18,16]
-                    ]
+                    [12, 8],
+                    [18, 16]
+                ]
             }
         }
     });
 
-    // Fetch Air Quality Index data feed
+    // Global store for air quality data feed
     var airQuality = [];
 
     // aqicn.org
@@ -107,7 +128,7 @@ map.on('style.load', function(e) {
                 response[row]["source"] = "AQICN";
             }
 
-            // console.log(response);
+            console.log(response);
 
             // Update the data
             updateDataLayer("aqi", response);
@@ -209,7 +230,7 @@ map.on('style.load', function(e) {
     }
 
     // India Open Data Association
-    // API http://openenvironment.indiaopendata.com/#/openapi/#Public%20API
+    // API https://market.mashape.com/sohil4932/open-environment-data-project
     var xhrIOD = new XMLHttpRequest();
     xhrIOD.onreadystatechange = function() {
 
@@ -234,14 +255,15 @@ map.on('style.load', function(e) {
         }
     }
 
-    // Update the feeds
-    xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
-    xhrOAQ.send({
-        limit: 500
-    });
+    // Fetch the air quality data feeds
 
-    xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
-    xhrIOD.send(null);
+    // xhrOAQ.open('GET', 'https://api.openaq.org/v1/latest', true);
+    // xhrOAQ.send({
+    //     limit: 500
+    // });
+
+    // xhrIOD.open('GET', 'http://api.airpollution.online/all/public/devices', true);
+    // xhrIOD.send(null);
 
     xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
     xhrINDIASPEND.send(null);
@@ -272,23 +294,23 @@ map.on('style.load', function(e) {
             }, function(geojson) {
                 // console.log(airQuality); // JSON
                 console.log(JSON.stringify(geojson)); //GeoJSON
-                console.log("AQI data:", geojson);
-                aqiDataLayer.setData(geojson);
+                // console.log("AQI data:", geojson);
+                map.getSource('aqi').setData(geojson);
             });
-
-
         }
-
     }
 
 });
 
-// Add interactivity
+// Details on click
 map.on('click', function(e) {
 
     // Popups from AQI layers
     // Show popup of feature from an OSM layer
-    var features = map.queryRenderedFeatures([[e.point.x-3,e.point.y-3],[e.point.x+3,e.point.y+3]], {
+    var features = map.queryRenderedFeatures([
+        [e.point.x - 3, e.point.y - 3],
+        [e.point.x + 3, e.point.y + 3]
+    ], {
         layers: ['aqi']
     })
 
@@ -303,11 +325,9 @@ map.on('click', function(e) {
             .addTo(map);
     }
 
-    console.log(features);
-
 })
 
-// Concentration to AQI calculator for openaq
+// Particle measurement -> AQI calculator for openaq data
 // https://airnow.gov/index.cfm?action=resources.conc_aqi_calc
 
 function Linear(AQIhigh, AQIlow, Conchigh, Conclow, Concentration) {
