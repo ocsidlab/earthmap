@@ -128,7 +128,7 @@ map.on('style.load', function(e) {
                 response[row]["source"] = "AQICN";
             }
 
-            console.log(response);
+            // console.log(response);
 
             // Update the data
             updateDataLayer("aqi", response);
@@ -160,6 +160,30 @@ map.on('style.load', function(e) {
 
     // Hindustan Times
     // http://airquality.hindustantimes.com/?city=Haldia
+
+    var xhrHINDUSTANTIMES = new XMLHttpRequest();
+    xhrHINDUSTANTIMES.onreadystatechange = function() {
+
+        if (xhrHINDUSTANTIMES.readyState == XMLHttpRequest.DONE) {
+
+            var response = JSON.parse(xhrHINDUSTANTIMES.responseText).reports;
+
+            // Add source
+            for (var row in response) {
+              response[row]["aqi"] = response[row].recent.aqi;
+              response[row]["name"] = response[row].station.location;
+              response[row]["lat"] = response[row].station.geo.coordinates[1];
+              response[row]["lon"] = response[row].station.geo.coordinates[0];
+              response[row]["source"] = response[row].station.source;
+            }
+
+            console.log(response);
+
+            // Update the data
+            updateDataLayer("aqi", response);
+
+        }
+    }
 
     // Aircasting
     // API https://github.com/HabitatMap/AirCasting/blob/master/doc/api.md
@@ -266,6 +290,9 @@ map.on('style.load', function(e) {
     xhrIOD.setRequestHeader("X-Mashape-Key", '2l1wjDc9AfmshNynxyNBTtLu05m8p1wccaxjsnYFaKi1uKDBdb');
     xhrIOD.setRequestHeader("Accept", 'application/json');
     xhrIOD.send(null);
+
+    xhrHINDUSTANTIMES.open('GET', 'http://airquality.hindustantimes.com/widget/map/data', true);
+    xhrHINDUSTANTIMES.send(null);
 
     xhrINDIASPEND.open('GET', 'http://aqi.indiaspend.org/aq/api/aqfeed/latestAll/?format=json', true);
     xhrINDIASPEND.send(null);
