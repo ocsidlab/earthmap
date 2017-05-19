@@ -115,9 +115,7 @@ map.on('style.load', function(e) {
 
         if (xhrAQICN.readyState == XMLHttpRequest.DONE) {
 
-            var response = JSON.parse(xhrAQICN.responseText.substring(13, xhrAQICN.responseText.length - 1), function(k, v) {
-                return (k === "aqi") ? parseInt(v) : v;
-            });
+            var response = JSON.parse(xhrAQICN.responseText);
 
             // console.log(response);
             // Update properties
@@ -299,7 +297,6 @@ map.on('style.load', function(e) {
 
     map.on('moveend', function(e) {
         var xhrAQICNBounds = map.getBounds()._sw.lat + ',' + +map.getBounds()._sw.lng + '),(' + map.getBounds()._ne.lat + ',' + map.getBounds()._ne.lng;
-//         xhrAQICN.open('GET', 'http://mapqb.waqi.info/mapq/bounds/?lurlv2&z=7&lang=en&jsoncallback=mapAddMakers&key=_1ca%27%12%1Cv%11%11%1F%237BI%3B%1C%1B&bounds=((' + xhrAQICNBounds + '))', true);
         xhrAQICN.open('GET', 'https://api.waqi.info/mapq/bounds/?bounds=' + xhrAQICNBounds + '&inc=placeholders&k=_2Y2EzVx9mCVkcHT8IS0lWXmldZEU+PSdRFWgjLQ==&_=' + Date.now(), true);
         xhrAQICN.send(null);
     });
