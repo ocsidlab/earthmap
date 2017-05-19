@@ -120,6 +120,7 @@ map.on('style.load', function(e) {
             // console.log(response);
             // Update properties
             for (var row in response) {
+                response[row]["aqi"] = parseInt(response[row].aqi);
                 response[row]["id"] = response[row]["idx"];
                 response[row]["time"] = response[row]["stamp"];
                 response[row]["name"] = response[row]["city"];
